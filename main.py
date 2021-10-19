@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 import uvicorn
-
 import db
 
 app = FastAPI()
@@ -9,24 +8,26 @@ app = FastAPI()
 async def read_root():
     return {"Hello": "World"}
 
+
 MyDB = db.Database()
 MyDB.connect("./pru/publicchat.sql")
-MyDB.create_table_if_not_exists(table_name='chat', fields=['content'])
+MyDB.create_table_if_not_exists(table_name='publicchat', fields=['hash', 'content'])
 
-@app.get("/publicchat/append/{content}")
-async def read_item(content: str):
-    dic = {}
-    dic['content'] = content
-    MyDB.insert(table_name='chat', values=dic)
-    ret = MyDB.select(table_name='chat', field_names=['content'])
-    rlist = []
-    for r in ret:
-        rlist.append(r[0])
-    return rlist
+ignored = {
+    "pru",
+}
 
-@app.get('/publicchat/save')
-async def save():
-    MyDB.save()
+from uvicorn.supervisors.watchgodreload import CustomWatcher
+
+class WatchgodWatcher(CustomWatcher):
+    def __init__(self, *args, **kwargs):
+        self.ignored_dirs.update(ignored)
+        super(WatchgodWatcher, self).__init__(*args, **kwargs)
+
+
+uvicorn.supervisors.watchgodreload.CustomWatcher = WatchgodWatcher
+
+__import__('publicchat')
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="localhost", port=7113)
+    uvicorn.run("main:app", host="192.168.0.2", port=7474, reload=True)

@@ -23,13 +23,14 @@ class Database():
         print(f'Execute : {query} & {params} -> {fetchall}')
         return fetchall
 
-    def select(self, table_name : str, field_names : list or str, condition : str = None, order : str = None) -> list:
-        select_query = 'SELECT {field_names} FROM {table_name} {where} {order_by}'.\
+    def select(self, table_name : str, field_names : list or str, condition : str = None, order : str = None, limit : int = None) -> list:
+        select_query = 'SELECT {field_names} FROM {table_name} {where} {order_by} {limit}'.\
             format(
                 field_names = ', '.join(field_names) if isinstance(field_names, list) else field_names,
                 table_name = table_name,
                 where = '{condition}'.format(condition = f'WHERE {condition}' if condition else ''),
-                order_by = ''.format(order = f'ORDER BY {order}' if order else '')
+                order_by = '{order}'.format(order = f'ORDER BY {order}' if order else ''),
+                limit= '{limit}'.format(limit = f'LIMIT {limit}' if limit else '')
                 )
 
         return self.execute(select_query)
