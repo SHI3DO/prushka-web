@@ -1,15 +1,16 @@
 from fastapi import FastAPI
 import uvicorn
-import db
+import database
 
 app = FastAPI()
+
 
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
 
 
-MyDB = db.Database()
+MyDB = database.Database()
 MyDB.connect("./pru/publicchat.sql")
 MyDB.create_table_if_not_exists(table_name='publicchat', fields=['hash', 'content'])
 
@@ -18,6 +19,7 @@ ignored = {
 }
 
 from uvicorn.supervisors.watchgodreload import CustomWatcher
+
 
 class WatchgodWatcher(CustomWatcher):
     def __init__(self, *args, **kwargs):
