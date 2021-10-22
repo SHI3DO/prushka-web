@@ -15,7 +15,7 @@ class ListView(QWidget):
         """
         채팅을 추가함
         """
-        res = requests.get(f"http://112.151.179.200:7474/publicchat/append/{self.appendChatInput.text()}").json()
+        res = requests.put(f"http://112.151.179.200:7474/publicchat?content={self.appendChatInput.text()}").json()
 
     def get(self):
         """
@@ -23,28 +23,29 @@ class ListView(QWidget):
         클라에 해시가 보관되어 있으면 그거 보내서 필요한 부분만 받아옴
         """
         if self.currentLastHashViewer.text() == '':
-            res = requests.get("http://112.151.179.200:7474/publicchat/get").json()
+            res = requests.get("http://112.151.179.200:7474/publicchat").json()
             self.addItemList(res)
         else:
-            res = requests.get(f"http://112.151.179.200:7474/publicchat/get?hash={self.currentLastHashViewer.text()}").json()
+            res = requests.get(f"http://112.151.179.200:7474/publicchat?hash={self.currentLastHashViewer.text()}").json()
             self.addItemList(res)
 
     def addItemList(self, res):
         """
         [[해시, 텍스트]] 형식의 리스트를 리스트뷰에 넣어줌
-        역순으로 리스트를 전달받으므로, 역순으로 한번 뒤집어줌
         그리고 마지막 해시는 해시 뷰어에 넣어줌
         """
-        for n, r in enumerate(reversed(res)):
-                self.chatting.addItem(str(r))
-                if n + 1== len(res):
-                    self.currentLastHashViewer.setText(str(r[0]))
+        print(res)
+        for n, r in enumerate(res):
+            print(n, r)
+            self.chatting.addItem(str(r))
+            if n + 1== len(res):
+                self.currentLastHashViewer.setText(str(r[0]))
             
     def save(self):
         """
         API에 저장하라고 시킴
         """
-        requests.get("http://112.151.179.200:7474/publicchat/save")
+        requests.get("http://112.151.179.200:7474/savedb")
  
     def initUI(self):
         self.mainLayout = QVBoxLayout()
