@@ -4,6 +4,8 @@ from PyQt5.QtGui import *
 
 import requests
 
+apiserver = ""
+
 class ListView(QWidget):
     def __init__(self, parent=None):
         super(ListView, self).__init__(parent)

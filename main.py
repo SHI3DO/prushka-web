@@ -17,10 +17,12 @@ MyDB.create_table_if_not_exists(table_name='user', fields=['userid', 'password',
 ignored = {"pru"}
 
 from uvicorn.supervisors.watchgodreload import CustomWatcher
+
 class WatchgodWatcher(CustomWatcher):
     def __init__(self, *args, **kwargs):
         self.ignored_dirs.update(ignored)
         super(WatchgodWatcher, self).__init__(*args, **kwargs)
+
 uvicorn.supervisors.watchgodreload.CustomWatcher = WatchgodWatcher
 
 import os
